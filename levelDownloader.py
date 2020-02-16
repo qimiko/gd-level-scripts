@@ -1,5 +1,6 @@
 from commonTypes import LevelString
-import levelUtil, requests, saveUtil, sys
+import levelUtil, saveUtil, sys
+import requests  # type: ignore
 from commonTypes import LevelString, RobDict
 from typing import Tuple, Dict
 

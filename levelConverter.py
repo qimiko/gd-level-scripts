@@ -8,7 +8,8 @@
 
 import objCharts
 import re
-import levelUtil, levelDownloader, saveUtil, sys, requests, base64, objCharts
+import levelUtil, levelDownloader, saveUtil, sys, base64, objCharts
+import requests # type: ignore
 import os # for error codes
 from typing import Dict
 from commonTypes import LevelString, RobDict

@@ -117,14 +117,24 @@ objNames: Dict[int, str] = {
 	1137: "Glass Inner Deco 6",
 	1138: "Glass Inner Deco 7",
 	1139: "Glass Inner Deco 8",
+	1269: "Large 45 Degree Glow",
+	1270: "Large 22.5 Degree Glow",
+	1271: "Small 45 Degree Glow",
+	1272: "Small 22.5 Degree Glow",
+	1273: "Medium 45 Degree Glow",
+	1274: "Medium 22.5 Degree Glow",
+	1733: "Ground Spike Cornerpiece",
+	1886: "Medium Glow Circle",
+	1887: "Small Glow Circle",
+	1888: "Large Glow Circle"
 }
 
 """
 [2.1 obj id, 1.9 equivalent]
 """
 objIds: Dict[int, int] = {
-	1338:  666,
-	1339:  667,
+	1338:  665,
+	1339:  666,
 	1715:  9,
 	1716:  365,
 	1734:  675,
