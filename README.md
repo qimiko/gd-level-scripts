@@ -7,6 +7,10 @@ Converts a level from 2.1 to 1.9 for no reason at all
 * Python 3.8
 * Requests
 
+## Notes on versions
+
+New releases will only be made if a breaking change is done that will change how levels are parsed. For any other changes, having an updated [objCharts.py](https://raw.githubusercontent.com/zmxhawrhbg/gd-level-converter/master/objCharts.py) should work fine.
+
 ## Usage
 
 ### Level Converter
