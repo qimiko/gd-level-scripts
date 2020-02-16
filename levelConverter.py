@@ -13,7 +13,7 @@ import os # for error codes
 from typing import Dict
 from commonTypes import LevelString, RobDict
 
-def uploadLevel(levelString: LevelString, levelInfo: RobDict) -> int:
+def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
 	'''
 	Uploads a level to 1.9 servers
 	'''
@@ -22,7 +22,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict) -> int:
 
 	# 1.9 descriptions aren't base64 encoded, we need to remove illegal characters before upload breaks them anyways
 	desc: str = base64.urlsafe_b64decode(levelInfo["3"]).decode()
-	desc = re.sub(r"[^A-Za-z0-9\., \$\-\_\.\+\!\*\'\(\)]", "", desc) # remove anything not url safe
+	desc = re.sub(r"[^A-Za-z0-9\., \$\-\_\.\+\!\*\'()]", "", desc) # remove anything not url safe
 
 	# some params don't exist
 	postdata = {"gjp": '', "gameVersion": 19, "userName": "21Reupload",
@@ -32,6 +32,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict) -> int:
             "password": 1, "original": levelInfo["1"], "songID": levelInfo.get("35", 0),
 						"objects": levelInfo.get("45", 0), "udid": "hi absolute :)"}
 	postdata["levelString"] = levelString
+
 	uploadRequest = requests.post(url, postdata)
 
 	try:
@@ -93,7 +94,7 @@ if __name__ == "__main__":
 
 	print("Uploading level...")
 	try:
-		levelID: int = uploadLevel(convLevel, levelInfo)
+		levelID: int = uploadLevel(encodedLevel, levelInfo)
 		print(f"Level reuploaded to id: {levelID}")
 	except:
 		print("couldn't reupload level!")
