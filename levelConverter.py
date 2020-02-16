@@ -1,5 +1,3 @@
-#!/bin/python3
-
 #######################################
 # 2.1 level format to 1.9 level auto converter
 # for the truest dashers
