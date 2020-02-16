@@ -202,16 +202,12 @@ clubstepObjConv: Dict[int, int] = {
 }
 
 """
-[2.1 color id, 1.9 equivalent]
+[2.1 obj id, 1.9 equivalent]
 """
-objColors: Dict[int, int] = {
-	1005: 1,
-	1006: 2,
-	1007: 5,
-	1: 3,
-	2: 4,
-	3: 6,
-	4: 7
+glowObj: Dict[int, int] = {
+	1011: 503,
+	1012: 504,
+	1013: 505,
 }
 
 """
@@ -227,6 +223,19 @@ colorTrigObj: Dict[int, int] = {
 	2: 717,
 	3: 718,
 	4: 743
+}
+
+"""
+[2.1 color id, 1.9 equivalent]
+"""
+objColors: Dict[int, int] = {
+	1005: 1,
+	1006: 2,
+	1007: 5,
+	1: 3,
+	2: 4,
+	3: 6,
+	4: 7
 }
 
 """

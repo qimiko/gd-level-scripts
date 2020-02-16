@@ -53,7 +53,10 @@ if __name__ == "__main__":
 	try:
 		mainID = int(sys.argv[1])
 	except:
-		print(f"Usage: {sys.argv[0]} <id>\nset env variable DRY to true if you want to skip upload\nset env variable CLUB to true to convert clubstep blocks 1-8")
+		print(f"""Usage: {sys.argv[0]} <id>\n
+set env variable DRY to true to skip upload
+set env variable CLUB to true to convert clubstep blocks 1-8
+set env variable GLOW to true to convert the full glow blocks""")
 		sys.exit(os.EX_USAGE)
 
 	levelString: LevelString = LevelString(b"")
@@ -69,6 +72,9 @@ if __name__ == "__main__":
 	if os.getenv("CLUB", False):
 		print("Clubstep block conversion enabled!\nThis can make some levels impossible!")
 		levelUtil.convClubstep = True
+	if os.getenv("GLOW", False):
+		print("Glow conversion enabled!")
+		levelUtil.convGlow = True
 
 	print("Converting...\n")
 
@@ -83,6 +89,8 @@ if __name__ == "__main__":
 
 	if set(levelUtil.illegalObj).intersection(objCharts.clubstepObjConv):
 		print("Note: Enabling the CLUB environment variable will convert most of the clubstep blocks, but can make the level impossible!")
+	if set(levelUtil.illegalObj).intersection(objCharts.glowObj):
+		print("Note: Enabling the GLOW environment variable will convert most of the full glow blocks!")
 
 	if not illegalObjs:
 		print("All objects converted!")
