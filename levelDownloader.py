@@ -1,5 +1,5 @@
 from commonTypes import LevelString
-import levelUtil, saveUtil, sys
+import levelUtil, saveUtil, sys, httpRequest
 import requests  # type: ignore
 from commonTypes import LevelString, RobDict
 from typing import Tuple, Dict
@@ -10,8 +10,8 @@ secret = 'Wmfd2893gb7'
 
 def downloadLevel(id: int) -> Tuple[LevelString, RobDict]:
 	postdata = {'levelID': id, 'gameVersion': gameV, 'secret': secret}
-	downloaded = requests.post(url, postdata)
-	levelInfo = levelUtil.parseKeyVarArray(downloaded.text, ':')
+	downloaded = httpRequest.postRequest(url, postdata)
+	levelInfo = levelUtil.parseKeyVarArray(downloaded.decode(), ':')
 	levelString = LevelString(saveUtil.decodeLevel(levelInfo['4']))
 
 	return levelString, levelInfo

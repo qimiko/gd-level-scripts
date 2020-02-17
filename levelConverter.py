@@ -5,11 +5,9 @@
 # by zmx
 ######################################
 
-
 import objCharts
 import re
-import levelUtil, levelDownloader, saveUtil, sys, base64, objCharts
-import requests # type: ignore
+import levelUtil, levelDownloader, saveUtil, sys, base64, objCharts, httpRequest
 import os # for error codes
 from typing import Dict
 from commonTypes import LevelString, RobDict
@@ -34,16 +32,15 @@ def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
 						"objects": levelInfo.get("45", 0), "udid": "hi absolute :)"}
 	postdata["levelString"] = levelString
 
-	uploadRequest = requests.post(url, postdata)
+	uploadRequest = httpRequest.postRequest(url, postdata)
 
 	try:
-		levelID: int = int(uploadRequest.text)
+		levelID: int = int(uploadRequest)
 		if levelID == -1:  # -1 is an error dumb
 				throw
-
 		return levelID
 	except:
-		print(f"Error occured while reuploading:\n{uploadRequest.text}")
+		print(f"Error occured while reuploading:\n{uploadRequest}")
 		raise Exception()
 
 if __name__ == "__main__":
