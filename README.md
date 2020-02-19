@@ -5,7 +5,6 @@ Converts a level from 2.1 to 1.9 for no reason at all
 ## Requirements
 
 * Python 3.8
-* Requests
 
 ## Notes on versions
 
