@@ -22,6 +22,15 @@ Will also use the following environment variables as settings:
 * `CLUB` - convert clubstep decoration into lined variants, may fix some decoration while breaking gameplay
 * `GLOW` - convert 2.1 glow blocks, may break some decoration
 
+### Level Merger
+
+`levelMerger.py <id> <id 2> ...`  
+Merges each level, uses first id as the level to take settings from (name, bg, etc)  
+Will also use the following environment variables as settings:
+
+* `MAIN` - download levels from 2.1
+* `EXPORT` - exports level to text file, does not upload (use with `MAIN`)
+
 ### Level Downloader
 
 `levelDownloader.py <id>`  

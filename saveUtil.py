@@ -30,8 +30,19 @@ def encryptRobFile(text: str) -> str:
 
 
 def decodeLevel(string: str) -> LevelString:
-    decoded = base64.urlsafe_b64decode(string)
-    decompressed = gzip.decompress(decoded)  # bug on 2.1  idk...?
+    try:
+        decoded = base64.urlsafe_b64decode(string)
+    except BaseException:
+        # string is either invalid or already decoded
+        if string.startswith("kS"):
+            return LevelString(string.encode())
+        else:
+            raise Exception()
+    try:
+        decompressed = gzip.decompress(decoded)  # bug on 2.1  idk...?
+    except BaseException:
+        decompressed = zlib.decompress(decoded, zlib.MAX_WBITS)
+        #  1.9 handling except if this errors then :p
     # i also just remembered i have no idea how i found out about this lol
     return LevelString(decompressed)
 

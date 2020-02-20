@@ -18,12 +18,14 @@ from typing import Dict
 from commonTypes import LevelString, RobDict
 
 
-def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
-    '''
-    Uploads a level to 1.9 servers
-    '''
+url: str = "https://absolllute.com/gdps/gdapi/uploadGJLevel19.php"
 
-    url = "https://absolllute.com/gdps/gdapi/uploadGJLevel19.php"
+
+def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
+    """
+    Uploads a level to 1.9 servers
+    2.1 support sometime, probably not
+    """
 
     # 1.9 descriptions aren't base64 encoded, we need to remove illegal
     # characters before upload breaks them anyways
