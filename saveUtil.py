@@ -4,15 +4,13 @@ import plistlib
 import gzip
 from typing import Any, Dict, List
 from commonTypes import LevelString
+from itertools import cycle
 
-# thanks absolute
 
-
-def Xor(data: Any, key) -> str:
-    res = []
-    for i in data:
-        res.append(i ^ key)
-    return bytearray(res).decode()
+# thanks nekit although he probably stole it from someone else lol
+def Xor(data: Any, key: Any) -> str:
+    return (''.join(chr(ord(x) ^ ord(y))
+                    for (x, y) in zip(data, cycle(str(key)))))
 
 
 def decodeRobFile(text: str) -> str:

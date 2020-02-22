@@ -10,8 +10,9 @@ import sys
 import os
 from typing import List, Any
 import levelDownloader
-from levelConverter import uploadLevel
+import levelConverter
 from commonTypes import LevelString, RobDict
+import saveUtil
 
 
 def listMerge(list1: List[Any], list2: List[Any]) -> List[Any]:
@@ -36,6 +37,14 @@ def incrementName(name: str) -> str:
         return name + " 2"
 
 
+def getObjCount(levelString: LevelString) -> int:
+    """
+    Gets object count for a level
+    """
+    objects = levelString.split(b';')
+    return len(objects[1:-1])
+
+
 if __name__ == "__main__":
     print("GD Level Merger by zmx")
 
@@ -54,8 +63,10 @@ EXPORT - export, do not upload""")
         levelDownloader.url = "https://absolllute.com/gdps/\
 gdapi/downloadGJLevel19.php"
     else:
-        print("2.1 level download enabled!")
-
+        print("2.1 level download/upload enabled!")
+        levelConverter.url = "http://www.boomlings.com/database/\
+uploadGJLevel21.php"
+        levelConverter.gameVersion = 21
 
     for id in sys.argv[1:]:
         try:
@@ -85,9 +96,12 @@ gdapi/downloadGJLevel19.php"
 
     print(f"Final Object Count: {len(finalLevel)}")
 
-    finalLevelStr: str = levelHeader + ";" + (';').join(finalLevel) + ";"
+    finalLevelStr: LevelString = LevelString(
+        (levelHeader + ";" + (';').join(finalLevel) + ";").encode())
+    finalLevelStr = LevelString(saveUtil.encodeLevel(finalLevelStr))
 
     levelInfo["2"] = incrementName(levelInfo["2"])
+    levelInfo["45"] = str(getObjCount(finalLevelStr))
 
     if os.getenv("EXPORT", "false").lower() == "true":
         print("Exporting level...")
@@ -95,10 +109,18 @@ gdapi/downloadGJLevel19.php"
             lvlFile.write(finalLevelStr)
         sys.exit()
 
+    if levelConverter.gameVersion >= 20:
+        import getpass
+        accUsername: str = input("Username: ")
+        password: str = getpass.getpass("User password: ")
+    else:
+        accUsername = ""
+        password = ""
+
     print("Uploading level...")
     try:
-        levelID: int = uploadLevel(LevelString(
-            finalLevelStr.encode()), levelInfo)
+        levelID: int = levelConverter.uploadLevel(
+            finalLevelStr, levelInfo, accUsername, password)
         print(f"Level reuploaded to id: {levelID}")
     except BaseException:
         print("couldn't reupload level!")

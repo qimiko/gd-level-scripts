@@ -5,6 +5,7 @@
 # by zmx
 ######################################
 
+from argparse import ArgumentError
 import objCharts
 import re
 import levelUtil
@@ -16,12 +17,16 @@ import httpRequest
 import os  # for error codes
 from typing import Dict
 from commonTypes import LevelString, RobDict
+import robtopCrypto
 
 
 url: str = "https://absolllute.com/gdps/gdapi/uploadGJLevel19.php"
+gameVersion: int = 19
+username: str = "21Reupload"
 
 
-def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
+def uploadLevel(levelString: LevelString, levelInfo: RobDict,
+                accUsername: str = username, password: str = None) -> int:
     """
     Uploads a level to 1.9 servers
     2.1 support sometime, probably not
@@ -29,22 +34,26 @@ def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
 
     # 1.9 descriptions aren't base64 encoded, we need to remove illegal
     # characters before upload breaks them anyways
-    desc: str = base64.urlsafe_b64decode(levelInfo["3"]).decode()
-    desc = re.sub(r"[^A-Za-z0-9\., \$\-\_\.\+\!\*\'()]",
-                  "", desc)  # remove anything not url safe
+    desc: str = levelInfo["3"]
+    if (gameVersion < 20):
+        desc = base64.urlsafe_b64decode(desc).decode()
+        desc = re.sub(r"[^A-Za-z0-9\., \$\-\_\.\+\!\*\'()]",
+                      "", desc)  # remove anything not url safe
 
     # some params don't exist
     postdata = {
         "gjp": '',
-        "gameVersion": 19,
-        "userName": "21Reupload",
-        "unlisted": "1",
+        "gameVersion": gameVersion,
+        "udid": "S-hi-people",
+        "userName": accUsername,
+        "unlisted": 1,
         "levelDesc": desc,
         "levelName": levelInfo["2"],
         "levelVersion": levelInfo["5"],
         "levelLength": levelInfo["15"],
         "audioTrack": levelInfo["12"],
         "password": 1,
+        "levelID": 0,
         "original": levelInfo["1"],
         "songID": levelInfo.get(
             "35",
@@ -52,8 +61,28 @@ def uploadLevel(levelString: bytes, levelInfo: RobDict) -> int:
         "objects": levelInfo.get(
             "45",
             0),
-        "udid": "hi absolute :)"}
+        "seed2": base64.urlsafe_b64encode(
+            robtopCrypto.makeSeed(levelString).encode()),
+        "auto": 0,
+        "twoPlayer": 0,  # going to guess
+        "ldm": levelInfo.get("40", 0),
+        "coins": levelInfo.get("37", 0),
+        "requestedStars": levelInfo.get("39", 0),
+        "gdw": 0,
+        "secret": "Wmfd2893gb7"}
     postdata["levelString"] = levelString
+
+    if gameVersion >= 20:
+        if not password or not accUsername:
+            raise ArgumentError()
+        try:
+            accID: int = robtopCrypto.loginUser(accUsername, password)
+        except BaseException:
+            print("invalid login")
+            raise Exception()
+        postdata["gjp"] = robtopCrypto.getGJP(password)
+        postdata["accountID"] = accID
+        postdata["userName"] = robtopCrypto.getUsername(accID)
 
     uploadRequest = httpRequest.postRequest(url, postdata)
 
@@ -128,8 +157,8 @@ This can make some levels impossible!""")
         sys.exit()
 
     print("Uploading level...")
-    try:
-        levelID: int = uploadLevel(encodedLevel, levelInfo)
-        print(f"Level reuploaded to id: {levelID}")
-    except BaseException:
-        print("couldn't reupload level!")
+# try:
+    levelID: int = uploadLevel(LevelString(encodedLevel), levelInfo)
+    print(f"Level reuploaded to id: {levelID}")
+# except BaseException:
+    print("couldn't reupload level!")

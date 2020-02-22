@@ -28,8 +28,8 @@ Will also use the following environment variables as settings:
 Merges each level, uses first id as the level to take settings from (name, bg, etc)  
 Will also use the following environment variables as settings:
 
-* `MAIN` - download levels from 2.1
-* `EXPORT` - exports level to text file, does not upload (use with `MAIN`)
+* `MAIN` - download levels from 2.1 and uploads to 2.1
+* `EXPORT` - exports level to text file, does not upload
 
 ### Level Downloader
 
