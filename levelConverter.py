@@ -29,7 +29,6 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
                 accUsername: str = username, password: str = None) -> int:
     """
     Uploads a level to 1.9 servers
-    2.1 support sometime, probably not
     """
 
     # 1.9 descriptions aren't base64 encoded, we need to remove illegal
@@ -104,9 +103,10 @@ if __name__ == "__main__":
         mainID = int(sys.argv[1])
     except BaseException:
         print(f"""Usage: {sys.argv[0]} <id>\n
-set env variable DRY to true to skip upload
-set env variable CLUB to true to convert clubstep blocks 1-8
-set env variable GLOW to true to convert the full glow blocks""")
+The following env variables modify executionL
+DRY - skip upload
+CLUB - convert clubstep blocks 1-8
+GLOW - convert the full glow blocks""")
         sys.exit(os.EX_USAGE)
 
     levelString: LevelString = LevelString(b"")
@@ -119,11 +119,11 @@ set env variable GLOW to true to convert the full glow blocks""")
         sys.exit(os.EX_DATAERR)
 
     print(f"Downloaded level `{levelInfo['2']}`")
-    if os.getenv("CLUB", False):
+    if os.getenv("CLUB", "false").lower() == "true":
         print("""Clubstep block conversion enabled!
 This can make some levels impossible!""")
         levelUtil.convClubstep = True
-    if os.getenv("GLOW", False):
+    if os.getenv("GLOW", "false").lower() == "true":
         print("Glow conversion enabled!")
         levelUtil.convGlow = True
 
@@ -152,7 +152,7 @@ This can make some levels impossible!""")
 
     print("")
 
-    if os.getenv("DRY", False):
+    if os.getenv("DRY", "false").lower() == "true":
         print("Dry mode enabled, no upload!")
         sys.exit()
 

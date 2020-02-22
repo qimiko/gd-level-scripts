@@ -46,12 +46,12 @@ def getObjCount(levelString: LevelString) -> int:
 
 
 if __name__ == "__main__":
-    print("GD Level Merger by zmx")
+    print("~ GD Level Merger by zmx ~")
 
     if len(sys.argv) < 2:
         print(f"""Usage: {sys.argv[0]} <id> <id>...
 The following environment variables modify execution:
-PS - download from 1.9 levels
+MAIN - download from 2.1 levels (and upload to)
 EXPORT - export, do not upload""")
         sys.exit(os.EX_USAGE)
 
