@@ -1,8 +1,7 @@
 #######################################
 # merges two+ levels
 # for the creators, i guess
-# uploads to (1.9) servers automatically and unlisted
-# i don't want to figure out 2.1 format :p
+# uploads to servers automatically and unlisted
 # by zmx
 ######################################
 
@@ -120,7 +119,8 @@ uploadGJLevel21.php"
     print("Uploading level...")
     try:
         levelID: int = levelConverter.uploadLevel(
-            finalLevelStr, levelInfo, accUsername, password)
+            finalLevelStr, levelInfo,
+            accUsername=accUsername, password=password)
         print(f"Level reuploaded to id: {levelID}")
     except BaseException:
         print("couldn't reupload level!")

@@ -1,7 +1,7 @@
 import saveUtil
 import hashlib
 import base64
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 import httpRequest
 import levelUtil
 
@@ -35,10 +35,10 @@ def getGJP(password: str) -> bytes:
 loginURL: str = "http://www.boomlings.com/database/accounts/loginGJAccount.php"
 
 
-def loginUser(username: str, password: str) -> int:
+def loginUser(username: str, password: str) -> Tuple[int, int]:
     """
     logins a user
-    returns account id
+    returns [account id, player id]
     """
     data: Dict[str, Any] = {
         "userName": username,
@@ -50,7 +50,10 @@ def loginUser(username: str, password: str) -> int:
     if loginRequest == b"-1":
         raise ValueError()
 
-    return int(loginRequest.split(b',')[0])
+    accID: int = int(loginRequest.split(b',')[0])
+    playerID: int = int(loginRequest.split(b',')[1])
+
+    return accID, playerID
 
 
 userInfoURL: str = "http://www.boomlings.com/database/getGJUserInfo20.php"

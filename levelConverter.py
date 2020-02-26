@@ -26,7 +26,8 @@ username: str = "21Reupload"
 
 
 def uploadLevel(levelString: LevelString, levelInfo: RobDict,
-                accUsername: str = username, password: str = None) -> int:
+                originalID: int = None, accUsername: str = username,
+                password: str = None, unlisted: bool = True) -> int:
     """
     Uploads a level to 1.9 servers
     """
@@ -45,7 +46,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
         "gameVersion": gameVersion,
         "udid": "S-hi-people",
         "userName": accUsername,
-        "unlisted": 1,
+        "unlisted": unlisted,
         "levelDesc": desc,
         "levelName": levelInfo["2"],
         "levelVersion": levelInfo["5"],
@@ -62,7 +63,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
             0),
         "seed2": base64.urlsafe_b64encode(
             robtopCrypto.makeSeed(levelString).encode()),
-        "auto": 0,
+        "auto": levelInfo.get("25", 0),
         "twoPlayer": 0,  # going to guess
         "ldm": levelInfo.get("40", 0),
         "coins": levelInfo.get("37", 0),
@@ -75,7 +76,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
         if not password or not accUsername:
             raise ArgumentError()
         try:
-            accID: int = robtopCrypto.loginUser(accUsername, password)
+            accID: int = robtopCrypto.loginUser(accUsername, password)[0]
         except BaseException:
             print("invalid login")
             raise Exception()
