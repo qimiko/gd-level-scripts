@@ -193,6 +193,9 @@ def convObjID(string: str) -> str:
             **objCharts.clubstepObjConv}
     if convGlow:
         objConversionSheet = {**objConversionSheet, **objCharts.glowObj}
+    if convColor:
+        objConversionSheet = {**objConversionSheet,
+                              **objCharts.colorDefaultBlockObj}
 
     parseObj = parseKeyVarArray(string, ',')
     try:
@@ -213,6 +216,7 @@ def convObjID(string: str) -> str:
 illegalObj: List[int] = []
 convClubstep: bool = False
 convGlow: bool = False
+convColor: bool = False
 
 
 def parseKeyVarArray(string: str, splitter: str) -> RobDict:
