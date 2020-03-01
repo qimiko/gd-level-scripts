@@ -20,6 +20,7 @@ Will also use the following environment variables as settings:
 
 * `DRY` - don't upload level, use to test if a level will reupload well
 * `CLUB` - convert clubstep decoration into lined variants, may fix some decoration while breaking gameplay
+* `COLOR` - convert color default blocks into lined variants, may fix some decoration while breaking gameplay
 * `GLOW` - convert 2.1 glow blocks, may break some decoration
 
 ### Level Merger
@@ -30,6 +31,11 @@ Will also use the following environment variables as settings:
 
 * `MAIN` - download levels from 2.1 and uploads to 2.1
 * `EXPORT` - exports level to text file, does not upload
+
+### Level Reuploader
+
+`levelReuploader.py <id> [audio id]`  
+Reuploads a 1.9 level to 2.1 servers. Can change audio ID if needed.
 
 ### Level Downloader
 
