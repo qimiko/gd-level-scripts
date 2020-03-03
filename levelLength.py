@@ -160,4 +160,5 @@ MAIN - download from 2.1""")
         sys.exit(1)
     seconds = getLevelLength(levelString.decode('utf8'))
     minutes, mSeconds = divmod(seconds, 60.0)
-    print(f'Length: {round(minutes)}m {math.ceil(mSeconds)}s')  # accurate to gd?
+    print(f'Length: {round(minutes)}m {math.ceil(mSeconds)}s')
+    # ceiling is more accurate to gd?

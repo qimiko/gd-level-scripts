@@ -7,8 +7,22 @@ from commonTypes import LevelString
 from itertools import cycle
 
 
+# thanks absolute
+def sXor(data: Any, key) -> str:
+    """
+    single key xor
+    (key <= 16)
+    """
+    res = []
+    for i in data:
+        res.append(i ^ key)
+    return bytearray(res).decode()
+
+
 # thanks nekit although he probably stole it from someone else lol
 def Xor(data: Any, key: Any) -> str:
+    if (key <= 16):
+        return sXor(data, key)
     return (''.join(chr(ord(x) ^ ord(y))
                     for (x, y) in zip(data, cycle(str(key)))))
 
