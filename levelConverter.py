@@ -44,7 +44,9 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
     postdata = {
         "gjp": '',
         "gameVersion": gameVersion,
+        "binaryVersion": gameVersion + 14,  # definitely not the correct way
         "udid": "S-hi-people",
+        "uuid": 3109282,
         "userName": accUsername,
         "unlisted": unlisted,
         "levelDesc": desc,
@@ -63,6 +65,12 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
             0),
         "seed2": base64.urlsafe_b64encode(
             robtopCrypto.makeSeed(levelString).encode()),
+        "wt2": 0,
+        "wt": 3,
+        "seed": "PJsBAJ24Po",
+        "extraString": ('_'.join(map(str, (0 for _ in range(55))))),
+        "levelInfo": saveUtil.encodeLevel(LevelString(b"0;1;1.12;;422.00;;")),
+        # thank nekit
         "auto": levelInfo.get("25", 0),
         "twoPlayer": 0,  # going to guess
         "ldm": levelInfo.get("40", 0),
@@ -124,6 +132,10 @@ GLOW - convert the full glow blocks""")
         print("""Clubstep block conversion enabled!
 This can make some levels impossible!""")
         levelUtil.convClubstep = True
+    if os.getenv("COLOR", "false").lower() == "true":
+        print("""Color block conversion enabled!
+This can make some levels impossible!""")
+        levelUtil.convColor = True
     if os.getenv("GLOW", "false").lower() == "true":
         print("Glow conversion enabled!")
         levelUtil.convGlow = True
@@ -147,6 +159,10 @@ This can make some levels impossible!""")
     if set(levelUtil.illegalObj).intersection(objCharts.glowObj):
         print("Note: Enabling the GLOW environment variable will convert",
               "most of the full glow blocks!")
+    if set(levelUtil.illegalObj).intersection(objCharts.colorDefaultBlockObj):
+        print("Note: Enabling the COLOR environment variable will convert",
+              "most of the color blocks",
+              "but can make the level impossible!")
 
     if not illegalObjs:
         print("All objects converted!")
@@ -158,8 +174,8 @@ This can make some levels impossible!""")
         sys.exit()
 
     print("Uploading level...")
-# try:
-    levelID: int = uploadLevel(LevelString(encodedLevel), levelInfo)
-    print(f"Level reuploaded to id: {levelID}")
-# except BaseException:
-    print("couldn't reupload level!")
+    try:
+        levelID: int = uploadLevel(LevelString(encodedLevel), levelInfo)
+        print(f"Level reuploaded to id: {levelID}")
+    except BaseException:
+        print("couldn't reupload level!")
