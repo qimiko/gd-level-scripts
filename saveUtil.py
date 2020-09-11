@@ -42,6 +42,10 @@ def encryptRobFile(text: str) -> str:
 
 
 def decodeLevel(string: str) -> LevelString:
+    # hacky way to check if the string is already decoded
+    if string.startswith("kS"):
+        return LevelString(string.encode())
+
     try:
         decoded = base64.urlsafe_b64decode(string)
     except BaseException:
