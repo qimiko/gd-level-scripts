@@ -52,7 +52,7 @@ if __name__ == "__main__":
 The following environment variables modify execution:
 MAIN - download from 2.1 levels (and upload to)
 EXPORT - export, do not upload""")
-        sys.exit(os.EX_USAGE)
+        sys.exit()
 
     levels: List[List[str]] = []
     levelHeader: str = ""
@@ -83,7 +83,7 @@ uploadGJLevel21.php"
                 levelHeader = curLevelHeader
         except BaseException:
             print("Please specfiy a valid id!")
-            sys.exit(os.EX_DATAERR)
+            sys.exit()
 
     finalLevel = List[List[str]]
     finalLevel = levels[0]

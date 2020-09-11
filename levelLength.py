@@ -149,7 +149,7 @@ gdapi/downloadGJLevel19.php"
         print(f"""Usage: {sys.argv[0]} <id>...
 The following environment variables modify execution:
 MAIN - download from 2.1""")
-        sys.exit(os.EX_USAGE)
+        sys.exit()
 
     try:
         levelFile = sys.argv[1]

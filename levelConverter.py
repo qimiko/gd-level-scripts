@@ -82,7 +82,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
 
     if gameVersion >= 20:
         if not password or not accUsername:
-            raise ArgumentError()
+            raise ArgumentError(None, "invalid credentials!")
         try:
             accID: int = robtopCrypto.loginUser(accUsername, password)[0]
         except BaseException:
@@ -116,7 +116,7 @@ The following env variables modify executionL
 DRY - skip upload
 CLUB - convert clubstep blocks 1-8
 GLOW - convert the full glow blocks""")
-        sys.exit(os.EX_USAGE)
+        sys.exit()
 
     levelString: LevelString = LevelString(b"")
     levelInfo: RobDict = RobDict({})
@@ -125,7 +125,7 @@ GLOW - convert the full glow blocks""")
         levelString, levelInfo = levelDownloader.downloadLevel(mainID)
     except BaseException:
         print("invalid level!")
-        sys.exit(os.EX_DATAERR)
+        sys.exit()
 
     print(f"Downloaded level `{levelInfo['2']}`")
     if os.getenv("CLUB", "false").lower() == "true":

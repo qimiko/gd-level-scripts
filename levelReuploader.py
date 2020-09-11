@@ -22,7 +22,7 @@ if __name__ == "__main__":
         mainID = int(sys.argv[1])
     except BaseException:
         print(f"""Usage: {sys.argv[0]} <id> [audio id]""")
-        sys.exit(os.EX_USAGE)
+        sys.exit()
 
     # download level first
     levelDownloader.url = "https://absolllute.com/gdps/\
@@ -34,7 +34,7 @@ gdapi/downloadGJLevel19.php"
         levelString, levelInfo = levelDownloader.downloadLevel(mainID)
     except BaseException:
         print("invalid level!")
-        sys.exit(os.EX_DATAERR)
+        sys.exit()
 
     print(f"Downloaded level `{levelInfo['2']}`")
 
@@ -51,11 +51,11 @@ gdapi/downloadGJLevel19.php"
         playerID = robtopCrypto.loginUser(accUsername, password)[1]
     except BaseException:
         print(f"Could not verify user {accUsername}!")
-        sys.exit(os.EX_NOUSER)
+        sys.exit()
 
     if int(levelInfo["6"]) != playerID:
         print("User did not make level!")
-        sys.exit(os.EX_NOUSER)
+        sys.exit()
 
     # level uploading
     robtopCrypto.loginURL = "http://www.boomlings.com/database/\
