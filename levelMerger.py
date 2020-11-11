@@ -45,20 +45,25 @@ def getObjCount(levelString: LevelString) -> int:
 
 
 if __name__ == "__main__":
-    print("~ GD Level Merger by zmx ~")
+    import argparse
 
-    if len(sys.argv) < 2:
-        print(f"""Usage: {sys.argv[0]} <id> <id>...
-The following environment variables modify execution:
-MAIN - download from 2.1 levels (and upload to)
-EXPORT - export, do not upload""")
-        sys.exit()
+    parser = argparse.ArgumentParser(
+        description="GD Level Merger", epilog="hi ~zmx")
+
+    parser.add_argument("base", help="base level", type=int)
+    parser.add_argument("ids", help="ids to merge", nargs="+", type=int)
+    parser.add_argument(
+        "--main", help="use 2.1 servers for download and upload", action="store_true")
+    parser.add_argument(
+        "--export", help="export level to file, skip upload", action="store_true")
+
+    args = parser.parse_args()
 
     levels: List[List[str]] = []
     levelHeader: str = ""
     levelInfo: RobDict = RobDict({})
 
-    if os.getenv("MAIN", "false").lower() == "false":
+    if not args.main:
         levelDownloader.url = "https://absolllute.com/gdps/\
 gdapi/downloadGJLevel19.php"
     else:
@@ -67,7 +72,10 @@ gdapi/downloadGJLevel19.php"
 uploadGJLevel21.php"
         levelConverter.gameVersion = 21
 
-    for id in sys.argv[1:]:
+    # we ensure that at least two arguments are provided
+    full_list = [args.base] + args.ids
+
+    for id in full_list:
         try:
             levelString, curLevelInfo = levelDownloader.downloadLevel(
                 int(id))  # i promise this isn't dangerous
@@ -77,12 +85,12 @@ uploadGJLevel21.php"
             curLevelHeader = levelObjects.pop(0)
             levels.append(levelObjects)
 
-            if sys.argv[1] == id:
+            if id == args.base:
                 levelInfo = curLevelInfo
                 print(f"Using info from `{levelInfo['2']}`")
                 levelHeader = curLevelHeader
-        except BaseException:
-            print("Please specfiy a valid id!")
+        except:
+            print(f"Please specfiy a valid id - {id} is broken!")
             sys.exit()
 
     finalLevel = List[List[str]]
@@ -102,7 +110,7 @@ uploadGJLevel21.php"
     levelInfo["2"] = incrementName(levelInfo["2"])
     levelInfo["45"] = str(getObjCount(finalLevelStr))
 
-    if os.getenv("EXPORT", "false").lower() == "true":
+    if args.export:
         print("Exporting level...")
         with open(levelInfo['2'] + '.txt', 'w') as lvlFile:
             lvlFile.write(finalLevelStr)
