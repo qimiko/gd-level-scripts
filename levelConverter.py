@@ -107,7 +107,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(prog="1.9 Level Reuploader Tool", description="by zmx")
+    parser = argparse.ArgumentParser(description="1.9 Level Reuploader Tool", epilog="hi ~zmx")
 
     parser.add_argument("id", help="id to reupload")
     parser.add_argument(
