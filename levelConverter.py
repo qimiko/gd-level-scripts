@@ -105,18 +105,25 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
 
 
 if __name__ == "__main__":
-    print("~ 1.9 Level Reuploader by zmx ~\n")
+    import argparse
 
-    mainID: int = 128
-    try:
-        mainID = int(sys.argv[1])
-    except BaseException:
-        print(f"""Usage: {sys.argv[0]} <id>\n
-The following env variables modify executionL
-DRY - skip upload
-CLUB - convert clubstep blocks 1-8
-GLOW - convert the full glow blocks""")
-        sys.exit()
+    parser = argparse.ArgumentParser(prog="1.9 Level Reuploader Tool", description="by zmx")
+
+    parser.add_argument("id", help="id to reupload")
+    parser.add_argument(
+        "-d", "--dry", help="skip uploading level", action="store_true")
+    parser.add_argument(
+        "--club", help="convert unlined clubstep blocks 1-8 to those with lines", action="store_true")
+    parser.add_argument(
+        "--glow", help="convert full glow blocks to 1.9 equivalents", action="store_true")
+    parser.add_argument(
+        "--color", help="convert colored blocks to non colored 1.9 equivalents", action="store_true")
+    parser.add_argument(
+        "--song", help="set custom song id", type=int)
+
+    args = parser.parse_args()
+
+    mainID = args.id
 
     levelString: LevelString = LevelString(b"")
     levelInfo: RobDict = RobDict({})
@@ -128,15 +135,15 @@ GLOW - convert the full glow blocks""")
         sys.exit()
 
     print(f"Downloaded level `{levelInfo['2']}`")
-    if os.getenv("CLUB", "false").lower() == "true":
+    if args.club:
         print("""Clubstep block conversion enabled!
 This can make some levels impossible!""")
         levelUtil.convClubstep = True
-    if os.getenv("COLOR", "false").lower() == "true":
+    if args.color:
         print("""Color block conversion enabled!
 This can make some levels impossible!""")
         levelUtil.convColor = True
-    if os.getenv("GLOW", "false").lower() == "true":
+    if args.glow:
         print("Glow conversion enabled!")
         levelUtil.convGlow = True
 
@@ -153,14 +160,14 @@ This can make some levels impossible!""")
         print(f"Illegal object: {objID} ({name})")
 
     if set(levelUtil.illegalObj).intersection(objCharts.clubstepObjConv):
-        print("Note: Enabling the CLUB environment variable will convert",
+        print("Note: Enabling the CLUB option will convert",
               "most of the clubstep blocks,",
               "but can make the level impossible!")
     if set(levelUtil.illegalObj).intersection(objCharts.glowObj):
-        print("Note: Enabling the GLOW environment variable will convert",
+        print("Note: Enabling the GLOW option will convert",
               "most of the full glow blocks!")
     if set(levelUtil.illegalObj).intersection(objCharts.colorDefaultBlockObj):
-        print("Note: Enabling the COLOR environment variable will convert",
+        print("Note: Enabling the COLOR option will convert",
               "most of the color blocks",
               "but can make the level impossible!")
 
@@ -169,13 +176,17 @@ This can make some levels impossible!""")
 
     print("")
 
-    if os.getenv("DRY", "false").lower() == "true":
+    if args.song:
+        print(f"Setting song to id {args.song} from id {levelInfo['35']}")
+        levelInfo['35'] = args.song
+
+    if args.dry:
         print("Dry mode enabled, no upload!")
         sys.exit()
 
     print("Uploading level...")
     try:
-        levelID: int = uploadLevel(LevelString(encodedLevel), levelInfo)
+        levelID = uploadLevel(LevelString(encodedLevel), levelInfo)
         print(f"Level reuploaded to id: {levelID}")
     except BaseException:
         print("couldn't reupload level!")
