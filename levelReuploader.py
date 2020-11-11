@@ -8,7 +8,6 @@
 import levelDownloader
 import levelConverter
 import sys
-import os
 from commonTypes import LevelString, RobDict
 import getpass
 import robtopCrypto
