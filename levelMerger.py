@@ -14,14 +14,19 @@ from commonTypes import LevelString, RobDict
 import saveUtil
 
 
-def listMerge(list1: List[Any], list2: List[Any]) -> List[Any]:
+def listMerge(list1: List[Any], list2: List[Any], remove_duplicate = True) -> List[Any]:
     """
     Merges two lists, keeping order and removing duplicates between two lists
     (while not removing duplicates in the first)
     from https://stackoverflow.com/a/1319355 lol
     """
     resulting_list: List[Any] = list(list1)
-    resulting_list.extend(x for x in list2 if x not in resulting_list)
+
+    if remove_duplicate:
+        resulting_list.extend(x for x in list2 if x not in resulting_list)
+    else:
+        resulting_list.extend(x for x in list2)
+
     return resulting_list
 
 
@@ -56,6 +61,8 @@ if __name__ == "__main__":
         "--main", help="use 2.1 servers for download and upload", action="store_true")
     parser.add_argument(
         "--export", help="export level to file, skip upload", action="store_true")
+    parser.add_argument(
+        "--allow-collisions", help="keep collisions while merging", action="store_true")
 
     args = parser.parse_args()
 
@@ -96,9 +103,15 @@ uploadGJLevel21.php"
     finalLevel = List[List[str]]
     finalLevel = levels[0]
 
+    allow_collisions = False
+    if args.allow_collisions:
+        print("collisions enabled!")
+        allow_collisions = True
+
     for pos, objects in enumerate(levels[1:]):
         print(f"Merging level {pos + 2} to level 1")
-        finalLevel = listMerge(finalLevel, objects[:-1])
+        if args.allow_collisions:
+            finalLevel = listMerge(finalLevel, objects[:-1], not allow_collisions)
         # last object is ;, keep that outta here
 
     print(f"Final Object Count: {len(finalLevel)}")
