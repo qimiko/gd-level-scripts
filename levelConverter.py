@@ -48,7 +48,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
         "udid": "S-hi-people",
         "uuid": 3109282,
         "userName": accUsername,
-        "unlisted": unlisted,
+        "unlisted": int(unlisted), # gd likes 1/0 booleans
         "levelDesc": desc,
         "levelName": levelInfo["2"],
         "levelVersion": levelInfo["5"],
@@ -119,6 +119,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--color", help="convert colored blocks to non colored 1.9 equivalents", action="store_true")
     parser.add_argument(
+        "--legacy", help="convert to 1.0 format as opposed to 1.9 format", action="store_true")
+    parser.add_argument(
+        "--max-objects", help="max object id for levels", type=int, default=744)
+    parser.add_argument(
+        "--url", help="url to upload level to", default=url)
+    parser.add_argument(
         "--song", help="set custom song id", type=int)
 
     args = parser.parse_args()
@@ -147,11 +153,20 @@ This can make some levels impossible!""")
         print("Glow conversion enabled!")
         levelUtil.convGlow = True
 
+    url = args.url
+    levelUtil.max_objects = args.max_objects
+
     print("Converting...\n")
 
     # rob likes his levels encoded
-    convLevel: LevelString = levelUtil.convLevelString(levelString)
-    encodedLevel: bytes = saveUtil.encodeLevel(convLevel)
+    if args.legacy:
+        print("Using legacy color format!")
+        gameVersion = 0
+
+        convLevel = levelUtil.convLevelStringPointEight(levelString)
+    else:
+        convLevel = levelUtil.convLevelString(levelString)
+        convLevel = saveUtil.encodeLevel(convLevel)
 
     illegalObjs: Dict[int, str] = levelUtil.illegalObjInfo(
         levelUtil.illegalObj)
@@ -186,7 +201,7 @@ This can make some levels impossible!""")
 
     print("Uploading level...")
     try:
-        levelID = uploadLevel(LevelString(encodedLevel), levelInfo)
+        levelID = uploadLevel(convLevel, levelInfo)
         print(f"Level reuploaded to id: {levelID}")
     except BaseException:
         print("couldn't reupload level!")

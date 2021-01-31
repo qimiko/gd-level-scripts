@@ -1,5 +1,4 @@
-from typing import Dict
-
+from typing import Dict, List, NamedTuple, TypedDict, Optional
 
 """
 [obj id, name]
@@ -383,3 +382,45 @@ headerColorID: Dict[int, str] = {
     3: 'kS35',
     4: 'kS36'
 }
+class PointEightHeaderKeys(NamedTuple):
+    r: str
+    g: str
+    b: str
+
+class PointEightHeader(TypedDict):
+    color_keys: PointEightHeaderKeys
+
+    blend_key: Optional[str]
+    player_color_key: Optional[str]
+
+    point_nine_equivalent: str
+
+
+point_six_headers: List[PointEightHeader] = [
+    PointEightHeader(  # bg color
+        color_keys=PointEightHeaderKeys(r="kS1", g="kS2", b="kS3"),
+        player_color_key="kS16",
+        point_nine_equivalent="kS29"
+    ),
+    PointEightHeader(  # ground color
+        color_keys=PointEightHeaderKeys(r="kS4", g="kS5", b="kS6"),
+        player_color_key="kS17",
+        point_nine_equivalent="kS30"
+    ),
+    PointEightHeader(  # line color
+        color_keys=PointEightHeaderKeys(r="kS7", g="kS8", b="kS9"),
+        player_color_key="kS18",
+        point_nine_equivalent="kS31"
+    ),
+    PointEightHeader(  # obj color
+        color_keys=PointEightHeaderKeys(r="kS10", g="kS11", b="kS12"),
+        player_color_key="kS19",
+        point_nine_equivalent="kS32"
+    ),
+    PointEightHeader(  # color 1
+        color_keys=PointEightHeaderKeys(r="kS13", g="kS14", b="kS15"),
+        player_color_key="kS20",
+        blend_key="kA5",
+        point_nine_equivalent="kS33"
+    ),
+]

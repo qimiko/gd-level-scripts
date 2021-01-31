@@ -11,6 +11,7 @@
 from typing import List, Dict
 import objCharts
 from commonTypes import LevelString, RobDict
+from functools import reduce
 
 '''
 what follows will be an explanation of the color header format in 1.9 and below
@@ -68,6 +69,32 @@ def convertColorHeader(colorHeader: str) -> str:
     finalHeader = ','.join(headerArray)
     return finalHeader
 
+def convertColorHeaderPointEight(header: str) -> RobDict:
+    """
+    takes a 1.9 color header and converts it to a 1.6 equivalent
+    """
+    header_name, header_value = header.split(',')
+
+    correct_header = next(
+        (x for x in objCharts.point_six_headers if x["point_nine_equivalent"] == header_name), None)
+    if not correct_header:
+        return {}
+
+    color_dict = parseKeyVarArray(header_value, '_')
+
+    color_string = {
+        correct_header['color_keys'].r: color_dict["1"],
+        correct_header['color_keys'].g: color_dict["2"],
+        correct_header['color_keys'].b: color_dict["3"]
+    }
+
+    if 'player_color_key' in correct_header and "4" in color_dict:
+        color_string[correct_header['player_color_key']] = color_dict["4"]
+
+    if 'blend_key' in correct_header and "5" in color_dict:
+        color_string[correct_header['blend_key']] = color_dict["5"]
+
+    return color_string
 
 def convertColors(cols: str) -> str:
     '''
@@ -183,7 +210,7 @@ def convObjID(string: str) -> str:
     '''
     converts obj ids to their 1.9 forms
     - expects string in format 1,667,2,34,3,54
-    - returns string in formta 1,1338,2,34,3,54
+    - returns string in format 1,1338,2,34,3,54
     '''
     objConversionSheet = objCharts.objIds
 
@@ -205,11 +232,15 @@ def convObjID(string: str) -> str:
         return newObjString
     except BaseException:
         # nothing to be done
-        if int(parseObj['1']) > 744 and int(parseObj['1']
+        if int(parseObj['1']) > max_objects and int(parseObj['1']
                                             ) not in illegalObj:
             # 744 is the last object in 1.9
             illegalObj.append(int(parseObj['1']))
             # print(f'Illegal object found! ID: {parseObj["1"]}')
+
+        if remove_invalid_objects and int(parseObj['1']) > max_objects:
+            return ""
+
         return string
 
 
@@ -217,7 +248,8 @@ illegalObj: List[int] = []
 convClubstep: bool = False
 convGlow: bool = False
 convColor: bool = False
-
+max_objects = 744
+remove_invalid_objects = True
 
 def parseKeyVarArray(string: str, splitter: str) -> RobDict:
     """
@@ -237,6 +269,34 @@ def parseKeyVarArray(string: str, splitter: str) -> RobDict:
 
     return RobDict(finalDict)
 
+def convLevelStringPointEight(string: LevelString) -> LevelString:
+    """
+    Converts a 1.9 level string to a >1.8 format
+    """
+
+    levelObjects = string.decode().split(';')
+    levelHeader = levelObjects.pop(0)
+
+    splitHeader = parseKeyVarArray(levelHeader, ",")
+    if "kS38" in splitHeader:
+        splitHeader.update(parseKeyVarArray(convertColorHeader(f"kS38,{splitHeader['kS38']}"), ","))
+        del splitHeader["kS38"]
+
+    if 'kS29' in splitHeader:
+        for index, header in splitHeader.copy().items():
+            if (index.startswith("kS")):
+                if int(index[2:]) >= 37:
+                    continue
+                splitHeader.update(convertColorHeaderPointEight(f"{index},{header}"))
+                del splitHeader[index]
+
+    header_list = list(reduce(lambda x, y: x + y, splitHeader.items()))
+
+    newHeader = ','.join(header_list)
+
+    newColors = convertColors(';'.join(levelObjects))
+
+    return LevelString((newHeader + ';' + newColors).encode())
 
 def convLevelString(string: LevelString) -> LevelString:
     '''
@@ -281,8 +341,25 @@ if __name__ == "__main__":
     import sys
     filename = sys.argv[1]
 
-    with open(filename + '.txt', 'r') as levelFile:
-        with open(filename + '-conv.txt', 'w') as convFile:
-            convFile.write(convLevelString(levelFile.read()))
+    point_six = False
+    if (len(sys.argv) > 2):
+        point_six = True
+        max_objects = 196
+
+        print("1.6 conversion enabled!")
+
+    with open(filename + '.txt', 'rb') as levelFile:
+        if (point_six):
+            level_string = convLevelStringPointEight(levelFile.read())
+        else:
+            level_string = convLevelString(levelFile.read())
+
+        illegalObjs: Dict[int, str] = illegalObjInfo(illegalObj)
+
+        for objID, name in illegalObjs.items():
+            print(f"Illegal object: {objID} ({name})")
+
+        with open(filename + '-conv.txt', 'wb') as convFile:
+            convFile.write(level_string)
 
     print('conversion done!')
