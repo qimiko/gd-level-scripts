@@ -162,6 +162,11 @@ def convertColTrigger(string: str) -> str:
     except BaseException:
         # rob is lazy, made this col1 why rob
         newCol = colorConversionSheet[1]
+
+    if newCol > max_objects and remove_invalid_objects:
+        illegalObj.append(int(newCol))
+        return ""
+
     newObjString = string.replace("1,899,", f"1,{newCol},")
     # print(f'Color Convert: {string} -> {newObjString}')
     return newObjString
@@ -227,6 +232,11 @@ def convObjID(string: str) -> str:
     parseObj = parseKeyVarArray(string, ',')
     try:
         newObj = objConversionSheet[int(parseObj['1'])]
+
+        if newObj > max_objects and remove_invalid_objects:
+            illegalObj.append(int(newObj))
+            return ""
+
         newObjString = string.replace(f'1,{parseObj["1"]}', f'1,{newObj}')
         # print(f'Obj Convert: {string} -> {newObjString}')
         return newObjString
