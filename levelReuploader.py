@@ -79,6 +79,15 @@ uploadGJLevel21.php"
             levelString, levelInfo, accUsername=accUsername, password=password,
             unlisted=False)
         print(f"Level reuploaded to id: {levelID}")
-    except BaseException:
-        print("couldn't reupload level!\n\
-this might mean custom song, try using argument 2!")
+    except levelConverter.LevelUploadError as upload_error:
+        print(f"Could not reupload level with code {upload_error.enum}")
+        if upload_error.enum == -1:
+            print("This likely means that you are being rate limited \
+or you have invalid data.\n\
+If you're uploading to a server based on cvolton's GMDPrivateServer, \
+you can only upload a level once every minute.\n\
+If you're reuploading to RobTop's server, \
+ensure that you are not using a custom song. \
+If you are, you can set the song id in argument 2.")
+    except Exception as err:
+        print(f"Reuploading level failed with error:\n{err}")

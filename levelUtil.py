@@ -69,6 +69,7 @@ def convertColorHeader(colorHeader: str) -> str:
     finalHeader = ','.join(headerArray)
     return finalHeader
 
+
 def convertColorHeaderPointEight(header: str) -> RobDict:
     """
     takes a 1.9 color header and converts it to a 1.6 equivalent
@@ -76,7 +77,8 @@ def convertColorHeaderPointEight(header: str) -> RobDict:
     header_name, header_value = header.split(',')
 
     correct_header = next(
-        (x for x in objCharts.point_six_headers if x["point_nine_equivalent"] == header_name), None)
+        (x for x in objCharts.point_six_headers if x["point_nine_equivalent"]
+            == header_name), None)
     if not correct_header:
         return {}
 
@@ -95,6 +97,7 @@ def convertColorHeaderPointEight(header: str) -> RobDict:
         color_string[correct_header['blend_key']] = color_dict["5"]
 
     return color_string
+
 
 def convertColors(cols: str) -> str:
     '''
@@ -243,7 +246,7 @@ def convObjID(string: str) -> str:
     except BaseException:
         # nothing to be done
         if int(parseObj['1']) > max_objects and int(parseObj['1']
-                                            ) not in illegalObj:
+                                                    ) not in illegalObj:
             # 744 is the last object in 1.9
             illegalObj.append(int(parseObj['1']))
             # print(f'Illegal object found! ID: {parseObj["1"]}')
@@ -260,6 +263,7 @@ convGlow: bool = False
 convColor: bool = False
 max_objects = 744
 remove_invalid_objects = True
+
 
 def parseKeyVarArray(string: str, splitter: str) -> RobDict:
     """
@@ -279,6 +283,7 @@ def parseKeyVarArray(string: str, splitter: str) -> RobDict:
 
     return RobDict(finalDict)
 
+
 def convLevelStringPointEight(string: LevelString) -> LevelString:
     """
     Converts a 1.9 level string to a >1.8 format
@@ -289,7 +294,10 @@ def convLevelStringPointEight(string: LevelString) -> LevelString:
 
     splitHeader = parseKeyVarArray(levelHeader, ",")
     if "kS38" in splitHeader:
-        splitHeader.update(parseKeyVarArray(convertColorHeader(f"kS38,{splitHeader['kS38']}"), ","))
+        splitHeader.update(
+            parseKeyVarArray(
+                convertColorHeader(f"kS38,{splitHeader['kS38']}"),
+                ","))
         del splitHeader["kS38"]
 
     if 'kS29' in splitHeader:
@@ -297,7 +305,8 @@ def convLevelStringPointEight(string: LevelString) -> LevelString:
             if (index.startswith("kS")):
                 if int(index[2:]) >= 37:
                     continue
-                splitHeader.update(convertColorHeaderPointEight(f"{index},{header}"))
+                splitHeader.update(
+                    convertColorHeaderPointEight(f"{index},{header}"))
                 del splitHeader[index]
 
     header_list = list(reduce(lambda x, y: x + y, splitHeader.items()))
@@ -307,6 +316,7 @@ def convLevelStringPointEight(string: LevelString) -> LevelString:
     newColors = convertColors(';'.join(levelObjects))
 
     return LevelString((newHeader + ';' + newColors).encode())
+
 
 def convLevelString(string: LevelString) -> LevelString:
     '''

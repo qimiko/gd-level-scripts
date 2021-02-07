@@ -6,7 +6,6 @@
 ######################################
 
 import sys
-import os
 from typing import List, Any
 import levelDownloader
 import levelConverter
@@ -14,7 +13,8 @@ from commonTypes import LevelString, RobDict
 import saveUtil
 
 
-def listMerge(list1: List[Any], list2: List[Any], remove_duplicate = True) -> List[Any]:
+def listMerge(list1: List[Any], list2: List[Any],
+              remove_duplicate=True) -> List[Any]:
     """
     Merges two lists, keeping order and removing duplicates between two lists
     (while not removing duplicates in the first)
@@ -58,11 +58,14 @@ if __name__ == "__main__":
     parser.add_argument("base", help="base level", type=int)
     parser.add_argument("ids", help="ids to merge", nargs="+", type=int)
     parser.add_argument(
-        "--main", help="use 2.1 servers for download and upload", action="store_true")
+        "--main", help="use 2.1 servers for download and upload",
+        action="store_true")
     parser.add_argument(
-        "--export", help="export level to file, skip upload", action="store_true")
+        "--export", help="export level to file, skip upload",
+        action="store_true")
     parser.add_argument(
-        "--allow-collisions", help="keep collisions while merging", action="store_true")
+        "--allow-collisions", help="keep collisions while merging",
+        action="store_true")
 
     args = parser.parse_args()
 
@@ -96,7 +99,7 @@ uploadGJLevel21.php"
                 levelInfo = curLevelInfo
                 print(f"Using info from `{levelInfo['2']}`")
                 levelHeader = curLevelHeader
-        except:
+        except BaseException:
             print(f"Please specfiy a valid id - {id} is broken!")
             sys.exit()
 
@@ -111,7 +114,8 @@ uploadGJLevel21.php"
     for pos, objects in enumerate(levels[1:]):
         print(f"Merging level {pos + 2} to level 1")
         if args.allow_collisions:
-            finalLevel = listMerge(finalLevel, objects[:-1], not allow_collisions)
+            finalLevel = listMerge(finalLevel, objects[:-1],
+                                   not allow_collisions)
         # last object is ;, keep that outta here
 
     print(f"Final Object Count: {len(finalLevel)}")
@@ -143,5 +147,11 @@ uploadGJLevel21.php"
             finalLevelStr, levelInfo,
             accUsername=accUsername, password=password)
         print(f"Level reuploaded to id: {levelID}")
-    except BaseException:
-        print("couldn't reupload level!")
+    except levelConverter.LevelUploadError as upload_error:
+        print(f"Could not upload level with code {upload_error.enum}")
+        if upload_error.enum == -1:
+            print("This likely means that you are being rate limited. \n\
+If you're uploading to a server based on cvolton's GMDPrivateServer, \
+you can only upload a level once every minute.")
+    except Exception as err:
+        print(f"Uploading level failed with error:\n{err}")

@@ -14,15 +14,19 @@ import saveUtil
 import sys
 import base64
 import httpRequest
-import os  # for error codes
 from typing import Dict
-from commonTypes import LevelString, RobDict
+from commonTypes import RobtopEnumError, LevelString, RobDict
 import robtopCrypto
 
 
 url: str = "https://absolllute.com/gdps/gdapi/uploadGJLevel19.php"
 gameVersion: int = 19
 username: str = "21Reupload"
+
+
+class LevelUploadError(RobtopEnumError):
+    def __str__(self):
+        return f"Upload Error: {self.enum}"
 
 
 def uploadLevel(levelString: LevelString, levelInfo: RobDict,
@@ -48,7 +52,7 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
         "udid": "S-hi-people",
         "uuid": 3109282,
         "userName": accUsername,
-        "unlisted": int(unlisted), # gd likes 1/0 booleans
+        "unlisted": int(unlisted),  # gd likes 1/0 booleans
         "levelDesc": desc,
         "levelName": levelInfo["2"],
         "levelVersion": levelInfo["5"],
@@ -94,34 +98,39 @@ def uploadLevel(levelString: LevelString, levelInfo: RobDict,
 
     uploadRequest = httpRequest.postRequest(url, postdata)
 
-    try:
-        levelID: int = int(uploadRequest)
-        if levelID == -1:  # -1 is an error dumb
-            raise Exception()
-        return levelID
-    except BaseException:
-        print(f"Error occured while reuploading:\n{uploadRequest}")
-        raise Exception()
+    levelID: int = int(uploadRequest)
+    if levelID < 0:  # -1 is an error dumb
+        raise LevelUploadError(levelID)
+    return levelID
 
 
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="1.9 Level Reuploader Tool", epilog="hi ~zmx")
+    parser = argparse.ArgumentParser(
+        description="1.9 Level Reuploader Tool", epilog="hi ~zmx")
 
     parser.add_argument("id", help="id to reupload")
     parser.add_argument(
-        "-d", "--dry", help="skip uploading level", action="store_true")
+        "-d", "--dry", help="skip uploading level",
+        action="store_true")
     parser.add_argument(
-        "--club", help="convert unlined clubstep blocks 1-8 to those with lines", action="store_true")
+        "--club",
+        help="convert unlined clubstep blocks 1-8 to those with lines",
+        action="store_true")
     parser.add_argument(
-        "--glow", help="convert full glow blocks to 1.9 equivalents", action="store_true")
+        "--glow", help="convert full glow blocks to 1.9 equivalents",
+        action="store_true")
     parser.add_argument(
-        "--color", help="convert colored blocks to non colored 1.9 equivalents", action="store_true")
+        "--color",
+        help="convert colored blocks to non colored 1.9 equivalents",
+        action="store_true")
     parser.add_argument(
-        "--legacy", help="convert to 1.0 format as opposed to 1.9 format", action="store_true")
+        "--legacy", help="convert to 1.0 format as opposed to 1.9 format",
+        action="store_true")
     parser.add_argument(
-        "--max-objects", help="max object id for levels", type=int, default=744)
+        "--max-objects", help="max object id for levels",
+        type=int, default=744)
     parser.add_argument(
         "--url", help="url to upload level to", default=url)
     parser.add_argument(
@@ -203,5 +212,11 @@ This can make some levels impossible!""")
     try:
         levelID = uploadLevel(convLevel, levelInfo)
         print(f"Level reuploaded to id: {levelID}")
-    except BaseException:
-        print("couldn't reupload level!")
+    except LevelUploadError as upload_error:
+        print(f"Could not reupload level with code {upload_error.enum}")
+        if upload_error.enum == -1:
+            print("This likely means that you are being rate limited. \n\
+If you're uploading to a server based on cvolton's GMDPrivateServer, \
+you can only upload a level once every minute.")
+    except Exception as err:
+        print(f"Reuploading level failed with error:\n{err}")

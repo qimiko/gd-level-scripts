@@ -382,10 +382,13 @@ headerColorID: Dict[int, str] = {
     3: 'kS35',
     4: 'kS36'
 }
+
+
 class PointEightHeaderKeys(NamedTuple):
     r: str
     g: str
     b: str
+
 
 class PointEightHeader(TypedDict):
     color_keys: PointEightHeaderKeys
