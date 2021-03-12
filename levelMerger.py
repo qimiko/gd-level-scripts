@@ -7,10 +7,12 @@
 
 import sys
 from typing import List, Any
+
 import levelDownloader
 import levelConverter
 from commonTypes import LevelString, RobDict
 import saveUtil
+from pathlib import Path
 
 
 def listMerge(list1: List[Any], list2: List[Any],
@@ -55,8 +57,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="GD Level Merger", epilog="hi ~zmx")
 
-    parser.add_argument("base", help="base level", type=int)
-    parser.add_argument("ids", help="ids to merge", nargs="+", type=int)
+    base_group = parser.add_mutually_exclusive_group(required=True)
+    base_group.add_argument(
+        "--base-id", help="base id to get attributes from", type=int)
+
+    # base file is not supported until i figure out a better format ~ zmx
+    #base_group.add_argument(
+    #    "--base-file", help="base files to get attributes from")
+
+    parser.add_argument("--ids", help="ids to merge", nargs="+", type=int)
+    parser.add_argument("--files", help="files to merge", nargs="+")
+
     parser.add_argument(
         "--main", help="use 2.1 servers for download and upload",
         action="store_true")
@@ -82,10 +93,16 @@ gdapi/downloadGJLevel19.php"
 uploadGJLevel21.php"
         levelConverter.gameVersion = 21
 
-    # we ensure that at least two arguments are provided
-    full_list = [args.base] + args.ids
+    # supporting multiple types is weird
 
-    for id in full_list:
+    # this is the id levels downloading stuff
+    download_list = []
+    if args.base_id:
+        download_list.append(args.base_id)
+    if args.ids:
+        download_list.extend(args.ids)
+
+    for id in download_list:
         try:
             levelString, curLevelInfo = levelDownloader.downloadLevel(
                 int(id))  # i promise this isn't dangerous
@@ -95,12 +112,42 @@ uploadGJLevel21.php"
             curLevelHeader = levelObjects.pop(0)
             levels.append(levelObjects)
 
-            if id == args.base:
+            if args.base_id and id == args.base_id:
                 levelInfo = curLevelInfo
                 print(f"Using info from `{levelInfo['2']}`")
                 levelHeader = curLevelHeader
-        except BaseException:
+        except:
             print(f"Please specfiy a valid id - {id} is broken!")
+            sys.exit()
+
+    open_list = []
+#    if args.base_file:
+#        open_list.append(args.base_file)
+    args.base_file = ""
+
+    if args.files:
+        open_list.extend(args.files)
+
+    for file in open_list:
+        try:
+            current_string = ""
+            with open(file, "r") as opened_file:
+                current_string = opened_file.read()
+                print(f"read file {file}")
+
+            levelObjects = current_string.split(';')
+            curLevelHeader = levelObjects.pop(0)
+            levels.append(levelObjects)
+
+            if file == args.base_file:
+                print(f"Using info from {file}")
+                levelInfo['2'] = Path(file).stem
+
+                # we'll just assume the last level added is base level. unless this is multithreaded
+                # dirty way to get header too
+                levelHeader = levels[-1].split(";")[0]
+        except:
+            print(f"invalid file `{file}`` provided!")
             sys.exit()
 
     finalLevel = List[List[str]]
@@ -113,8 +160,7 @@ uploadGJLevel21.php"
 
     for pos, objects in enumerate(levels[1:]):
         print(f"Merging level {pos + 2} to level 1")
-        if args.allow_collisions:
-            finalLevel = listMerge(finalLevel, objects[:-1],
+        finalLevel = listMerge(finalLevel, objects[:-1],
                                    not allow_collisions)
         # last object is ;, keep that outta here
 
