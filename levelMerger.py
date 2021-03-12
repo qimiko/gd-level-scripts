@@ -175,7 +175,7 @@ uploadGJLevel21.php"
 
     if args.export:
         print("Exporting level...")
-        with open(levelInfo['2'] + '.txt', 'w') as lvlFile:
+        with open(levelInfo['2'] + '.txt', 'wb') as lvlFile:
             lvlFile.write(finalLevelStr)
         sys.exit()
 
