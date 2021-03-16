@@ -135,6 +135,9 @@ if __name__ == "__main__":
         "--url", help="url to upload level to", default=url)
     parser.add_argument(
         "--song", help="set custom song id", type=int)
+    parser.add_argument(
+        "--export", help="output level as text file. ignores dry setting",
+        action="store_true")
 
     args = parser.parse_args()
 
@@ -203,6 +206,11 @@ This can make some levels impossible!""")
     if args.song:
         print(f"Setting song to id {args.song} from id {levelInfo['35']}")
         levelInfo['35'] = args.song
+
+    if args.export:
+        print(f"Exporting level to {levelInfo['2']}-conv.txt")
+        with open(f"{levelInfo['2']}-conv.txt", "wb") as x:
+            x.write(convLevel)
 
     if args.dry:
         print("Dry mode enabled, no upload!")
