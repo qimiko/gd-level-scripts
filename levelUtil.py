@@ -293,6 +293,10 @@ def convLevelStringPointEight(string: LevelString) -> LevelString:
     levelHeader = levelObjects.pop(0)
 
     splitHeader = parseKeyVarArray(levelHeader, ",")
+    if "kA14" in splitHeader:
+        # guideline objects cause the level to fail to load for some reason
+        del splitHeader["kA14"]
+
     if "kS38" in splitHeader:
         splitHeader.update(
             parseKeyVarArray(
