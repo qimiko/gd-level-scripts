@@ -20,21 +20,26 @@ New releases will only be made if a breaking change is done that will change how
 
 `levelConverter.py <id>`  
 Converts a level with id `<id>`.  
-Will also use the following environment variables as settings:
+Will also use the following arguments as settings:
 
-* `DRY` - don't upload level, use to test if a level will reupload well
-* `CLUB` - convert clubstep decoration into lined variants, may fix some decoration while breaking gameplay
-* `COLOR` - convert color default blocks into lined variants, may fix some decoration while breaking gameplay
-* `GLOW` - convert 2.1 glow blocks, may break some decoration
+* `--dry` - don't upload level, use to test if a level will reupload well
+* `--club` - convert clubstep decoration into lined variants, may fix some decoration while breaking gameplay
+* `--color` - convert color default blocks into lined variants, may fix some decoration while breaking gameplay
+* `--glow` - convert 2.1 glow blocks, may break some decoration
+* `--legacy` - convert to legacy (pre-1.9) color format (note: legacy levels may crash sometimes if your level uses too many modern features)
+* `--max-objects` - maximum object id to keep in level, object ids over that limit will be removed/logged
+* `--song` - custom song id to set level to on reupload
+* `--export` - exports level string to text file, skips upload
 
 ### Level Merger
 
-`levelMerger.py <id> <id 2> ...`  
-Merges each level, uses first id as the level to take settings from (name, bg, etc)  
-Will also use the following environment variables as settings:
+`levelMerger.py [--base-file <filename> | --base-id <ids>] [--ids <ids> | --files <files>]`
+Merges each level, uses base id/file as the level to take settings from (name, bg, etc)  
+Will also use the following arguments variables as settings:
 
-* `MAIN` - download levels from 2.1 and uploads to 2.1
-* `EXPORT` - exports level to text file, does not upload
+* `--main` - download levels from 2.1 and uploads to 2.1
+* `--export` - exports level to text file, does not upload
+* `--allow-collisions` - disables duplicate object removal, may fix some broken levels
 
 ### Level Reuploader
 
