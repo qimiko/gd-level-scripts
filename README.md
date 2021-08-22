@@ -33,7 +33,7 @@ Will also use the following arguments as settings:
 
 ### Level Merger
 
-`levelMerger.py [--base-file <filename> | --base-id <ids>] [--ids <ids> | --files <files>]`
+`levelMerger.py [--base-file <filename> | --base-id <ids>] [--ids <ids> | --files <files>]`  
 Merges each level, uses base id/file as the level to take settings from (name, bg, etc)  
 Will also use the following arguments variables as settings:
 
