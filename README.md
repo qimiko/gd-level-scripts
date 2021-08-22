@@ -2,6 +2,10 @@
 
 Converts a level from 2.1 to 1.9 for no reason at all
 
+## Important information
+
+Due to changes in the 2.1 server security, the scripts that interact with the Geometry Dash 2.1 servers (converter, downloader, etc.) will no longer work as they are blocked by the protection. There are ways to bypass this, but they are private for now and **any pull request that tries to add a bypass will be denied**. For now, contact me on Discord if you want me to run a script on any level.
+
 ## Requirements
 
 * Python 3.8
